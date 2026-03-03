@@ -15,8 +15,8 @@ router.get('/dificultad/:dificultad', rutaController.obtenerPorDificultad);
 router.use(verificarToken);
 router.get('/', rutaController.obtenerTodos);
 router.get('/:id', rutaController.obtenerPorId);
-router.post('/', verificarRol('Admin', 'Empleado'), rutaController.crear);
-router.put('/:id', verificarRol('Admin', 'Empleado'), rutaController.actualizar);
-router.delete('/:id', verificarRol('Admin'), rutaController.eliminar);
+router.post('/', verificarRol('Administrador', 'Empleado'), rutaController.crear);
+router.put('/:id', verificarRol('Administrador', 'Empleado'), rutaController.actualizar);
+router.delete('/:id', verificarRol('Administrador'), rutaController.eliminar);
 
 module.exports = router;

@@ -7,6 +7,10 @@
 const express = require('express');
 const router = express.Router();
 const detalleReservaController = require('../controllers/detalleReservaController');
+const { verificarToken, verificarRol } = require('../middleware/authMiddleware');
+
+// Proteger todas las rutas
+router.use(verificarToken);
 
 // ========== PROGRAMACIONES ==========
 // GET - Programaciones de una reserva

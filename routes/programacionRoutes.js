@@ -11,8 +11,8 @@ router.get('/disponibles', programacionController.obtenerDisponibles);
 router.get('/ruta/:id_ruta', programacionController.obtenerPorRuta);
 router.get('/', programacionController.obtenerTodos);
 router.get('/:id', programacionController.obtenerPorId);
-router.post('/', verificarRol('Admin', 'Empleado'), programacionController.crear);
-router.put('/:id', verificarRol('Admin', 'Empleado'), programacionController.actualizar);
-router.delete('/:id', verificarRol('Admin'), programacionController.eliminar);
+router.post('/', verificarRol('Administrador', 'Empleado'), programacionController.crear);
+router.put('/:id', verificarRol('Administrador', 'Empleado'), programacionController.actualizar);
+router.delete('/:id', verificarRol('Administrador'), programacionController.eliminar);
 
 module.exports = router;

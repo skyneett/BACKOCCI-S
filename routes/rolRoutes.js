@@ -12,7 +12,7 @@ const { verificarToken, verificarRol } = require('../middleware/authMiddleware')
 /**
  * Todas las rutas requieren autenticación y rol Admin
  */
-router.use(verificarToken, verificarRol('Admin'));
+router.use(verificarToken, verificarRol('Administrador'));
 
 /**
  * GET /api/roles

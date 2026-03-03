@@ -11,8 +11,8 @@ router.get('/disponibles', servicioController.obtenerDisponibles);
 router.get('/tipo/:tipo', servicioController.obtenerPorTipo);
 router.get('/', servicioController.obtenerTodos);
 router.get('/:id', servicioController.obtenerPorId);
-router.post('/', verificarRol('Admin', 'Empleado'), servicioController.crear);
-router.put('/:id', verificarRol('Admin', 'Empleado'), servicioController.actualizar);
-router.delete('/:id', verificarRol('Admin'), servicioController.eliminar);
+router.post('/', verificarRol('Administrador', 'Empleado'), servicioController.crear);
+router.put('/:id', verificarRol('Administrador', 'Empleado'), servicioController.actualizar);
+router.delete('/:id', verificarRol('Administrador'), servicioController.eliminar);
 
 module.exports = router;

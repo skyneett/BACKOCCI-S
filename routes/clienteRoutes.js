@@ -10,8 +10,8 @@ router.use(verificarToken);
 router.get('/', clienteController.obtenerTodos);
 router.get('/buscar', clienteController.buscar);
 router.get('/:id', clienteController.obtenerPorId);
-router.post('/', verificarRol('Admin', 'Empleado'), clienteController.crear);
-router.put('/:id', verificarRol('Admin', 'Empleado'), clienteController.actualizar);
-router.delete('/:id', verificarRol('Admin'), clienteController.eliminar);
+router.post('/', verificarRol('Administrador', 'Empleado'), clienteController.crear);
+router.put('/:id', verificarRol('Administrador', 'Empleado'), clienteController.actualizar);
+router.delete('/:id', verificarRol('Administrador'), clienteController.eliminar);
 
 module.exports = router;

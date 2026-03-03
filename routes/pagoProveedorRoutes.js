@@ -7,6 +7,10 @@
 const express = require('express');
 const router = express.Router();
 const pagoProveedorController = require('../controllers/pagoProveedorController');
+const { verificarToken, verificarRol } = require('../middleware/authMiddleware');
+
+// Proteger todas las rutas (solo Admin y Empleado)
+router.use(verificarToken, verificarRol('Administrador', 'Empleado'));
 
 // GET - Todos los pagos
 router.get('/', pagoProveedorController.obtenerTodos);

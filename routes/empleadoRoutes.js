@@ -6,7 +6,7 @@ const router = express.Router();
 const empleadoController = require('../controllers/empleadoController');
 const { verificarToken, verificarRol } = require('../middleware/authMiddleware');
 
-router.use(verificarToken, verificarRol('Admin'));
+router.use(verificarToken, verificarRol('Administrador'));
 router.get('/buscar', empleadoController.buscar);
 router.get('/', empleadoController.obtenerTodos);
 router.get('/:id', empleadoController.obtenerPorId);

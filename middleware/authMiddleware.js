@@ -86,7 +86,7 @@ const verificarPropietarioRecurso = (req, res, next) => {
   const idUsuarioRecurso = parseInt(req.params.id) || parseInt(req.body.id_usuario);
 
   // Admin puede acceder a cualquier recurso
-  if (req.usuario.rol_nombre === 'Admin') {
+  if (req.usuario.rol_nombre === 'Administrador') {
     return next();
   }
 

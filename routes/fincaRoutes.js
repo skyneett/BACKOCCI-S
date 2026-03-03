@@ -11,8 +11,8 @@ router.get('/disponibles', fincaController.obtenerDisponibles);
 router.get('/buscar', fincaController.buscar);
 router.get('/', fincaController.obtenerTodos);
 router.get('/:id', fincaController.obtenerPorId);
-router.post('/', verificarRol('Admin', 'Empleado'), fincaController.crear);
-router.put('/:id', verificarRol('Admin', 'Empleado'), fincaController.actualizar);
-router.delete('/:id', verificarRol('Admin'), fincaController.eliminar);
+router.post('/', verificarRol('Administrador', 'Empleado'), fincaController.crear);
+router.put('/:id', verificarRol('Administrador', 'Empleado'), fincaController.actualizar);
+router.delete('/:id', verificarRol('Administrador'), fincaController.eliminar);
 
 module.exports = router;

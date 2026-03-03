@@ -7,6 +7,10 @@
 const express = require('express');
 const router = express.Router();
 const detalleProveedorServicioController = require('../controllers/detalleProveedorServicioController');
+const { verificarToken, verificarRol } = require('../middleware/authMiddleware');
+
+// Proteger todas las rutas
+router.use(verificarToken);
 
 // GET - Servicios de un proveedor
 router.get('/proveedor/:idProveedor', detalleProveedorServicioController.obtenerServiciosPorProveedor);
@@ -18,12 +22,12 @@ router.get('/servicio/:idServicio', detalleProveedorServicioController.obtenerPr
 router.get('/:id', detalleProveedorServicioController.obtenerPorId);
 
 // POST - Asignar servicio a proveedor
-router.post('/', detalleProveedorServicioController.asignar);
+router.post('/', verificarRol('Administrador', 'Empleado'), detalleProveedorServicioController.asignar);
 
 // PUT - Actualizar precio
-router.put('/:id', detalleProveedorServicioController.actualizarPrecio);
+router.put('/:id', verificarRol('Administrador', 'Empleado'), detalleProveedorServicioController.actualizarPrecio);
 
 // DELETE - Eliminar asignación
-router.delete('/:id', detalleProveedorServicioController.eliminar);
+router.delete('/:id', verificarRol('Administrador'), detalleProveedorServicioController.eliminar);
 
 module.exports = router;

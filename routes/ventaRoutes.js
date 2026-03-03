@@ -6,7 +6,7 @@ const router = express.Router();
 const ventaController = require('../controllers/ventaController');
 const { verificarToken, verificarRol } = require('../middleware/authMiddleware');
 
-router.use(verificarToken, verificarRol('Admin', 'Empleado'));
+router.use(verificarToken, verificarRol('Administrador', 'Empleado'));
 
 router.get('/', ventaController.obtenerTodos);
 router.get('/estadisticas', ventaController.obtenerEstadisticas);

@@ -6,7 +6,7 @@ const router = express.Router();
 const permisoController = require('../controllers/permisoController');
 const { verificarToken, verificarRol } = require('../middleware/authMiddleware');
 
-router.use(verificarToken, verificarRol('Admin'));
+router.use(verificarToken, verificarRol('Administrador'));
 router.get('/', permisoController.obtenerTodos);
 router.get('/:id', permisoController.obtenerPorId);
 router.post('/', permisoController.crear);

@@ -37,4 +37,11 @@ router.get('/profile', verificarToken, authController.obtenerPerfil);
  */
 router.put('/cambiar-contrasena', verificarToken, authController.cambiarContrasena);
 
+/**
+ * GET /api/auth/reset-admin
+ * RUTA TEMPORAL: Resetear contraseña del admin
+ * Público (solo para desarrollo)
+ */
+router.get('/reset-admin', authController.resetAdmin);
+
 module.exports = router;

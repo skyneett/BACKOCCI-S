@@ -16,14 +16,14 @@ const crearRutasCRUD = (controller, soloAdmin = false) => {
   
   // Si soloAdmin es true, requiere rol Admin
   if (soloAdmin) {
-    router.use(verificarRol('Admin'));
+    router.use(verificarRol('Administrador'));
   }
   
   router.get('/', controller.obtenerTodos);
   router.get('/:id', controller.obtenerPorId);
-  router.post('/', verificarRol('Admin', 'Empleado'), controller.crear);
-  router.put('/:id', verificarRol('Admin', 'Empleado'), controller.actualizar);
-  router.delete('/:id', verificarRol('Admin'), controller.eliminar);
+  router.post('/', verificarRol('Administrador', 'Empleado'), controller.crear);
+  router.put('/:id', verificarRol('Administrador', 'Empleado'), controller.actualizar);
+  router.delete('/:id', verificarRol('Administrador'), controller.eliminar);
   
   return router;
 };
