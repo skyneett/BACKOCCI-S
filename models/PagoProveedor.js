@@ -19,9 +19,11 @@ class PagoProveedor {
         pp.id_pago_proveedor, pp.id_proveedores, pp.observaciones,
         pp.monto, pp.fecha_pago, pp.metodo_pago, pp.numero_transaccion,
         pp.comprobante_pago, pp.estado, pp.fecha_registro,
-        p.nombre as proveedor_nombre, p.tipo_servicio, p.telefono, p.email
+        p.nombre as proveedor_nombre, p.id_tipo, tp.nombre as tipo_nombre,
+        p.telefono, p.email
       FROM pago_proveedor pp
       INNER JOIN proveedores p ON pp.id_proveedores = p.id_proveedores
+      LEFT JOIN tipo_proveedor tp ON p.id_tipo = tp.id_tipo
       ORDER BY pp.fecha_pago DESC
     `;
     const result = await db.query(query);
@@ -37,10 +39,11 @@ class PagoProveedor {
         pp.id_pago_proveedor, pp.id_proveedores, pp.observaciones,
         pp.monto, pp.fecha_pago, pp.metodo_pago, pp.numero_transaccion,
         pp.comprobante_pago, pp.estado, pp.fecha_registro,
-        p.nombre as proveedor_nombre, p.tipo_servicio, p.telefono, p.email,
-        p.direccion
+        p.nombre as proveedor_nombre, p.id_tipo, tp.nombre as tipo_nombre,
+        p.telefono, p.email, p.direccion
       FROM pago_proveedor pp
       INNER JOIN proveedores p ON pp.id_proveedores = p.id_proveedores
+      LEFT JOIN tipo_proveedor tp ON p.id_tipo = tp.id_tipo
       WHERE pp.id_pago_proveedor = $1
     `;
     const result = await db.query(query, [id]);
@@ -72,9 +75,10 @@ class PagoProveedor {
       SELECT 
         pp.id_pago_proveedor, pp.id_proveedores, pp.observaciones,
         pp.monto, pp.fecha_pago, pp.metodo_pago, pp.estado,
-        p.nombre as proveedor_nombre, p.tipo_servicio
+        p.nombre as proveedor_nombre, p.id_tipo, tp.nombre as tipo_nombre
       FROM pago_proveedor pp
       INNER JOIN proveedores p ON pp.id_proveedores = p.id_proveedores
+      LEFT JOIN tipo_proveedor tp ON p.id_tipo = tp.id_tipo
       WHERE pp.fecha_pago BETWEEN $1 AND $2
       ORDER BY pp.fecha_pago DESC
     `;

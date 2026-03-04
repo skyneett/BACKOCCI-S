@@ -37,10 +37,11 @@ class DetalleProveedorServicio {
       SELECT 
         dps.id_detalle_proveedor_servicio, dps.id_proveedores, dps.id_servicio,
         dps.precio_proveedor, dps.fecha_asignacion,
-        p.nombre as proveedor_nombre, p.tipo_servicio, p.telefono,
-        p.email, p.estado as proveedor_estado
+        p.nombre as proveedor_nombre, p.id_tipo, tp.nombre as tipo_nombre,
+        p.telefono, p.email, p.estado as proveedor_estado
       FROM detalle_proveedor_servicio dps
       INNER JOIN proveedores p ON dps.id_proveedores = p.id_proveedores
+      LEFT JOIN tipo_proveedor tp ON p.id_tipo = tp.id_tipo
       WHERE dps.id_servicio = $1
       ORDER BY p.nombre
     `;
@@ -56,10 +57,11 @@ class DetalleProveedorServicio {
       SELECT 
         dps.id_detalle_proveedor_servicio, dps.id_proveedores, dps.id_servicio,
         dps.precio_proveedor, dps.fecha_asignacion,
-        p.nombre as proveedor_nombre, p.tipo_servicio,
+        p.nombre as proveedor_nombre, p.id_tipo, tp.nombre as tipo_nombre,
         s.nombre as servicio_nombre, s.descripcion as servicio_descripcion
       FROM detalle_proveedor_servicio dps
       INNER JOIN proveedores p ON dps.id_proveedores = p.id_proveedores
+      LEFT JOIN tipo_proveedor tp ON p.id_tipo = tp.id_tipo
       INNER JOIN servicio s ON dps.id_servicio = s.id_servicio
       WHERE dps.id_detalle_proveedor_servicio = $1
     `;

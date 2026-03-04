@@ -133,10 +133,11 @@ class Servicio {
   static async obtenerProveedores(idServicio) {
     const query = `
       SELECT 
-        p.id_proveedores, p.nombre, p.tipo_servicio,
+        p.id_proveedores, p.nombre, p.id_tipo, tp.nombre as tipo_nombre,
         p.telefono, p.email, p.estado,
         dps.precio_proveedor, dps.fecha_asignacion
       FROM proveedores p
+      LEFT JOIN tipo_proveedor tp ON p.id_tipo = tp.id_tipo
       INNER JOIN detalle_proveedor_servicio dps ON p.id_proveedores = dps.id_proveedores
       WHERE dps.id_servicio = $1
       ORDER BY p.nombre ASC

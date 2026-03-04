@@ -5,10 +5,14 @@ Esta carpeta contiene los scripts SQL para la base de datos de Occitours.
 ## Archivos disponibles
 
 ### 📄 schema_completo.sql
+**Versión:** 3.0  
+**Fecha:** 4 de marzo de 2026  
 **Descripción:** Script completo de la base de datos con todas las tablas, índices y triggers.
 
 **Contenido:**
-- ✅ **21 tablas** del sistema
+- ✅ **22 tablas** del sistema
+- ✅ **Nuevos campos en usuarios:** verificación de email y recuperación de contraseña
+- ✅ **Nueva tabla:** tipo_proveedor para categorización de proveedores
 - ✅ **Módulos:** Autenticación, Usuarios, Proveedores, Productos, Programación, Reservas, Ventas y Pagos
 - ✅ **Índices** para optimización de consultas
 - ✅ **Triggers automáticos:**
@@ -51,16 +55,73 @@ psql -U postgres -d occitours -f database/schema_pagos.sql
 
 ---
 
+### 📄 migration_v3.sql
+**Versión:** 3.0  
+**Fecha:** 4 de marzo de 2026  
+**Descripción:** Migración incremental de v2.0 a v3.0
+
+**Contenido:**
+- ✅ Agrega campos de verificación de email a tabla `usuarios`
+- ✅ Agrega campos de recuperación de contraseña a tabla `usuarios`
+- ✅ Crea tabla `tipo_proveedor`
+- ✅ Migra datos de `tipo_servicio` a `id_tipo` en `proveedores`
+- ✅ Inserta tipos de proveedor iniciales
+- ✅ Scripts de verificación
+
+**Uso:**
+```bash
+psql -U postgres -d occitours -f database/migration_v3.sql
+```
+
+**Cuándo usar:**
+- Si tienes la versión 2.0 y quieres actualizar a 3.0 sin perder datos
+- Migra automáticamente los datos existentes de proveedores
+
+---
+
+### 📄 seed_tipo_proveedor.sql
+**Descripción:** Datos iniciales para la tabla tipo_proveedor
+
+**Contenido:**
+- Transporte
+- Alimentación
+- Guía
+- Hospedaje
+- Equipamiento
+- Entretenimiento
+
+**Uso:**
+```bash
+psql -U postgres -d occitours -f database/seed_tipo_proveedor.sql
+```
+
+**Cuándo usar:**
+- Al instalar la base de datos por primera vez
+- Si necesitas restaurar los tipos de proveedor básicos
+
+---
+
 ## Flujo recomendado
 
-### 🆕 Base de datos nueva
+### 🆕 Base de datos nueva (v3.0)
 Si estás creando la base de datos por primera vez:
 
-1. Ejecuta `schema_completo.sql` (contiene todo el sistema completo)
-2. Listo! Ya tienes todas las tablas, triggers e índices
+1. Ejecuta `schema_completo.sql` (contiene todo el sistema completo v3.0)
+2. Ejecuta `seed_tipo_proveedor.sql` (opcional, inserta tipos de proveedor básicos)
+3. Listo! Ya tienes todas las tablas, triggers e índices
 
-### 🔄 Base de datos existente
-Si ya tienes la base de datos y quieres agregar el sistema de pagos:
+### 🔄 Actualizar desde v2.0 a v3.0
+Si ya tienes la base de datos v2.0:
+
+1. **Haz un respaldo de tu base de datos** ⚠️
+   ```bash
+   pg_dump -U postgres -d occitours -F c -f backup_v2_$(date +%Y%m%d).backup
+   ```
+2. Ejecuta `migration_v3.sql` (migra datos automáticamente)
+3. Verifica que todo funcionó correctamente
+
+### 🔄 Solo agregar sistema de pagos (v2.0)
+Si tienes una versión anterior y solo quieres el sistema de pagos:
 
 1. Haz un respaldo de tu base de datos
 2. Ejecuta `schema_pagos.sql` (solo agrega las mejoras de pago)
@@ -77,12 +138,13 @@ Si ya tienes la base de datos y quieres agregar el sistema de pagos:
 - `rol_permiso` - Relación roles-permisos
 
 #### 2️⃣ Usuarios
-- `usuarios` - Credenciales de login (correo + contraseña)
+- `usuarios` - Credenciales de login (correo + contraseña + verificación de email)
 - `cliente` - Información de clientes
 - `empleado` - Información de empleados
 
 #### 3️⃣ Propietarios y Proveedores
 - `propietario` - Dueños de fincas
+- `tipo_proveedor` - Catálogo de tipos de proveedores (Transporte, Alimentación, etc.)
 - `proveedores` - Proveedores de servicios
 - `detalle_proveedor_servicio` - Servicios que ofrece cada proveedor
 
@@ -141,6 +203,54 @@ QR-00000123-20260216154530
 - `Verificado`: Empleado revisó el comprobante
 - `Aprobado`: Pago confirmado ✅ (activa el trigger)
 - `Rechazado`: Comprobante inválido
+
+---
+
+## Nuevas funcionalidades v3.0
+
+### 📧 Verificación de Email
+La tabla `usuarios` ahora incluye campos para verificar el correo electrónico:
+
+**Campos agregados:**
+- `email_verified_at`: Fecha de verificación del correo
+- `verification_token`: Token único para verificación
+- `verification_token_expires_at`: Expiración del token
+
+**Flujo de verificación:**
+1. Usuario se registra → se genera `verification_token`
+2. Sistema envía email con link de verificación
+3. Usuario hace clic → se actualiza `email_verified_at`
+4. Token expira después de cierto tiempo
+
+### 🔐 Recuperación de Contraseña
+Campos para resetear contraseña de forma segura:
+
+**Campos agregados:**
+- `password_reset_token`: Token único para resetear contraseña
+- `password_reset_token_expires_at`: Expiración del token
+
+**Flujo de recuperación:**
+1. Usuario solicita resetear contraseña → se genera `password_reset_token`
+2. Sistema envía email con link de recuperación
+3. Usuario hace clic y establece nueva contraseña
+4. Token se invalida después de usarse o expirar
+
+### 🏷️ Tipos de Proveedor
+Ahora los proveedores se categorizan mediante la tabla `tipo_proveedor`:
+
+**Ventajas:**
+- ✅ Categorización estandarizada
+- ✅ Fácil agregar nuevos tipos
+- ✅ Integridad referencial
+- ✅ Mejor consultas y reportes
+
+**Tipos incluidos por defecto:**
+- Transporte
+- Alimentación
+- Guía
+- Hospedaje
+- Equipamiento
+- Entretenimiento
 
 ---
 

@@ -1,10 +1,13 @@
 -- =====================================================
 -- OCCITOURS - SCHEMA COMPLETO DE BASE DE DATOS
 -- =====================================================
--- Versión: 2.0
--- Fecha: 16 de febrero de 2026
+-- Versión: 3.0
+-- Fecha: 4 de marzo de 2026
 -- Base de datos: PostgreSQL 12+
+-- Actualización: Nuevos campos en usuarios, tabla tipo_proveedor
 -- =====================================================
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
 
 -- Eliminar base de datos si existe (CUIDADO EN PRODUCCIÓN)
 -- DROP DATABASE IF EXISTS occitours;
@@ -54,7 +57,12 @@ CREATE TABLE IF NOT EXISTS usuarios (
     id_usuarios SERIAL PRIMARY KEY,
     correo VARCHAR(100) NOT NULL UNIQUE,
     contrasena VARCHAR(255) NOT NULL, -- hash bcrypt
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    email_verified_at TIMESTAMP,
+    verification_token VARCHAR(255),
+    verification_token_expires_at TIMESTAMP,
+    password_reset_token VARCHAR(255),
+    password_reset_token_expires_at TIMESTAMP
 );
 
 -- Tabla: cliente
@@ -111,11 +119,19 @@ CREATE TABLE IF NOT EXISTS propietario (
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Tabla: tipo_proveedor
+CREATE TABLE IF NOT EXISTS tipo_proveedor (
+    id_tipo SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE, -- 'Transporte', 'Alimentación', 'Guía', 'Hospedaje'
+    descripcion TEXT,
+    estado BOOLEAN DEFAULT true -- true=activo, false=inactivo
+);
+
 -- Tabla: proveedores
 CREATE TABLE IF NOT EXISTS proveedores (
     id_proveedores SERIAL PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
-    tipo_servicio VARCHAR(100), -- 'Transporte', 'Alimentación', 'Guía'
+    id_tipo INTEGER NOT NULL REFERENCES tipo_proveedor(id_tipo),
     telefono VARCHAR(20),
     email VARCHAR(100),
     direccion TEXT,
@@ -484,7 +500,8 @@ COMMENT ON TABLE usuarios IS 'Credenciales de autenticación (correo y contrase�
 COMMENT ON TABLE cliente IS 'Información completa de clientes';
 COMMENT ON TABLE empleado IS 'Información completa de empleados';
 COMMENT ON TABLE propietario IS 'Propietarios de fincas';
-COMMENT ON TABLE proveedores IS 'Proveedores de servicios (transporte, alimentación, etc.)';
+COMMENT ON TABLE tipo_proveedor IS 'Catálogo de tipos de proveedores (Transporte, Alimentación, Guía, Hospedaje)';
+COMMENT ON TABLE proveedores IS 'Proveedores de servicios';
 COMMENT ON TABLE ruta IS 'Rutas turísticas disponibles';
 COMMENT ON TABLE finca IS 'Fincas disponibles para hospedaje';
 COMMENT ON TABLE servicio IS 'Servicios adicionales (guía, alimentación, etc.)';

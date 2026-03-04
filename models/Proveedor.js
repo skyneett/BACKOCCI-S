@@ -16,10 +16,11 @@ class Proveedor {
   static async obtenerTodos() {
     const query = `
       SELECT 
-        id_proveedores, nombre, tipo_servicio, telefono,
-        email, direccion, estado, fecha_registro
-      FROM proveedores
-      ORDER BY nombre ASC
+        p.id_proveedores, p.nombre, p.id_tipo, tp.nombre as tipo_nombre,
+        p.telefono, p.email, p.direccion, p.estado, p.fecha_registro
+      FROM proveedores p
+      LEFT JOIN tipo_proveedor tp ON p.id_tipo = tp.id_tipo
+      ORDER BY p.nombre ASC
     `;
     const result = await db.query(query);
     return result.rows;
@@ -31,10 +32,11 @@ class Proveedor {
   static async obtenerPorId(id) {
     const query = `
       SELECT 
-        id_proveedores, nombre, tipo_servicio, telefono,
-        email, direccion, estado, fecha_registro
-      FROM proveedores
-      WHERE id_proveedores = $1
+        p.id_proveedores, p.nombre, p.id_tipo, tp.nombre as tipo_nombre,
+        p.telefono, p.email, p.direccion, p.estado, p.fecha_registro
+      FROM proveedores p
+      LEFT JOIN tipo_proveedor tp ON p.id_tipo = tp.id_tipo
+      WHERE p.id_proveedores = $1
     `;
     const result = await db.query(query, [id]);
     return result.rows[0];
@@ -44,16 +46,16 @@ class Proveedor {
    * Crear nuevo proveedor
    */
   static async crear(datos) {
-    const { nombre, tipo_servicio, telefono, email, direccion } = datos;
+    const { nombre, id_tipo, telefono, email, direccion } = datos;
     
     const query = `
-      INSERT INTO proveedores (nombre, tipo_servicio, telefono, email, direccion)
+      INSERT INTO proveedores (nombre, id_tipo, telefono, email, direccion)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *
     `;
     
     const result = await db.query(query, [
-      nombre, tipo_servicio, telefono, email, direccion
+      nombre, id_tipo, telefono, email, direccion
     ]);
     
     return result.rows[0];
@@ -63,13 +65,13 @@ class Proveedor {
    * Actualizar proveedor
    */
   static async actualizar(id, datos) {
-    const { nombre, tipo_servicio, telefono, email, direccion, estado } = datos;
+    const { nombre, id_tipo, telefono, email, direccion, estado } = datos;
     
     const query = `
       UPDATE proveedores
       SET 
         nombre = COALESCE($1, nombre),
-        tipo_servicio = COALESCE($2, tipo_servicio),
+        id_tipo = COALESCE($2, id_tipo),
         telefono = COALESCE($3, telefono),
         email = COALESCE($4, email),
         direccion = COALESCE($5, direccion),
@@ -79,7 +81,7 @@ class Proveedor {
     `;
     
     const result = await db.query(query, [
-      nombre, tipo_servicio, telefono, email, direccion, estado, id
+      nombre, id_tipo, telefono, email, direccion, estado, id
     ]);
     
     return result.rows[0];
@@ -189,13 +191,15 @@ class Proveedor {
   static async buscar(termino) {
     const query = `
       SELECT 
-        id_proveedores, nombre, tipo_servicio, telefono, email, estado
-      FROM proveedores
+        p.id_proveedores, p.nombre, p.id_tipo, tp.nombre as tipo_nombre,
+        p.telefono, p.email, p.estado
+      FROM proveedores p
+      LEFT JOIN tipo_proveedor tp ON p.id_tipo = tp.id_tipo
       WHERE 
-        nombre ILIKE $1 OR
-        tipo_servicio ILIKE $1 OR
-        email ILIKE $1
-      ORDER BY nombre ASC
+        p.nombre ILIKE $1 OR
+        tp.nombre ILIKE $1 OR
+        p.email ILIKE $1
+      ORDER BY p.nombre ASC
       LIMIT 20
     `;
     const result = await db.query(query, [`%${termino}%`]);
@@ -203,18 +207,19 @@ class Proveedor {
   }
 
   /**
-   * Obtener proveedores por tipo de servicio
+   * Obtener proveedores por tipo
    */
-  static async obtenerPorTipo(tipoServicio) {
+  static async obtenerPorTipo(idTipo) {
     const query = `
       SELECT 
-        id_proveedores, nombre, tipo_servicio, telefono,
-        email, direccion, estado
-      FROM proveedores
-      WHERE tipo_servicio = $1 AND estado = true
-      ORDER BY nombre ASC
+        p.id_proveedores, p.nombre, p.id_tipo, tp.nombre as tipo_nombre,
+        p.telefono, p.email, p.direccion, p.estado
+      FROM proveedores p
+      LEFT JOIN tipo_proveedor tp ON p.id_tipo = tp.id_tipo
+      WHERE p.id_tipo = $1 AND p.estado = true
+      ORDER BY p.nombre ASC
     `;
-    const result = await db.query(query, [tipoServicio]);
+    const result = await db.query(query, [idTipo]);
     return result.rows;
   }
 }

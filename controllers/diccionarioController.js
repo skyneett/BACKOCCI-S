@@ -140,12 +140,22 @@ const generarDiccionarioDatos = async (req, res) => {
                 ]
             },
             {
+                nombre: 'tipo_proveedor',
+                descripcion: 'Catálogo de tipos de proveedores',
+                columnas: [
+                    { nombre: 'id_tipo', tipo: 'SERIAL', nulo: 'NO', clave: 'PK', default: 'AUTO', descripcion: 'Identificador único del tipo de proveedor' },
+                    { nombre: 'nombre', tipo: 'VARCHAR(100)', nulo: 'NO', clave: 'UNIQUE', default: null, descripcion: 'Nombre del tipo (Transporte, Alimentación, Guía, Hospedaje)' },
+                    { nombre: 'descripcion', tipo: 'TEXT', nulo: 'SÍ', clave: '', default: null, descripcion: 'Descripción del tipo de proveedor' },
+                    { nombre: 'estado', tipo: 'BOOLEAN', nulo: 'SÍ', clave: '', default: 'true', descripcion: 'Estado: true=activo, false=inactivo' }
+                ]
+            },
+            {
                 nombre: 'proveedores',
                 descripcion: 'Proveedores de servicios (transporte, alimentación, guía)',
                 columnas: [
                     { nombre: 'id_proveedores', tipo: 'SERIAL', nulo: 'NO', clave: 'PK', default: 'AUTO', descripcion: 'Identificador único del proveedor' },
                     { nombre: 'nombre', tipo: 'VARCHAR(150)', nulo: 'NO', clave: '', default: null, descripcion: 'Nombre de la empresa o proveedor' },
-                    { nombre: 'tipo_servicio', tipo: 'VARCHAR(100)', nulo: 'SÍ', clave: '', default: null, descripcion: 'Transporte, Alimentación, Guía, Hospedaje' },
+                    { nombre: 'id_tipo', tipo: 'INTEGER', nulo: 'NO', clave: 'FK', default: null, descripcion: 'Referencia al tipo de proveedor (tipo_proveedor.id_tipo)' },
                     { nombre: 'telefono', tipo: 'VARCHAR(20)', nulo: 'SÍ', clave: '', default: null, descripcion: 'Número telefónico de contacto' },
                     { nombre: 'email', tipo: 'VARCHAR(100)', nulo: 'SÍ', clave: '', default: null, descripcion: 'Correo electrónico de contacto' },
                     { nombre: 'direccion', tipo: 'TEXT', nulo: 'SÍ', clave: '', default: null, descripcion: 'Dirección de la empresa' },
@@ -447,7 +457,7 @@ const generarDiccionarioDatos = async (req, res) => {
         const modulos = [
             { modulo: 'Autenticación y Autorización', tablas: 3, nombres: 'roles, permisos, rol_permiso' },
             { modulo: 'Usuarios', tablas: 3, nombres: 'usuarios, cliente, empleado' },
-            { modulo: 'Propietarios y Proveedores', tablas: 3, nombres: 'propietario, proveedores, detalle_proveedor_servicio' },
+            { modulo: 'Propietarios y Proveedores', tablas: 4, nombres: 'propietario, tipo_proveedor, proveedores, detalle_proveedor_servicio' },
             { modulo: 'Productos y Servicios', tablas: 3, nombres: 'ruta, finca, servicio' },
             { modulo: 'Programación', tablas: 1, nombres: 'programacion' },
             { modulo: 'Reservas', tablas: 5, nombres: 'reserva, detalle_reserva_programacion, detalle_reserva_finca, detalle_reserva_servicio, detalle_reserva_acompanante' },
@@ -468,7 +478,7 @@ const generarDiccionarioDatos = async (req, res) => {
         // Agregar totales
         const totalRow = resumenSheet.addRow({
             modulo: 'TOTAL',
-            tablas: 21,
+            tablas: 22,
             nombres: '-'
         });
         totalRow.font = { bold: true, size: 11 };
